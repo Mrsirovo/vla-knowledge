@@ -2,10 +2,9 @@
 
 本仓库系统整理 **VLA 的发展脉络、代表性模型与关键技术**，帮助研究者快速入门与深入。内容覆盖机器人操作（manipulation）任务，涵盖近期重要综述与开源项目。
 
-- 📜 历史纵览：`1_history/timeline.md`
-- 🧠 主要模型：`2_models/`
-- 🛠️ 关键技术（含 LoRA 深入细节）：`3_techniques/`
-- 🗂️ 数据集与评测：`4_data_and_benchmarks/datasets_benchmarks.md`
+- 📜 历史纵览：`history/timeline.md`
+- 🧠 主要模型：`models/`
+- 🛠️ 关键技术（含 LoRA 深入细节）：`techniques/`
 - 🤝 参与贡献：`CONTRIBUTING.md`
 
 > 主线参考综述：
