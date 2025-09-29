@@ -25,7 +25,7 @@
 ## 使用方法
 
 ```bash
-git clone https://github.com/yourname/vla-knowledge-base.git
+git clone git@github.com:Mrsirovo/vla-knowledge.git
 cd vla-knowledge-base
 ```
 
