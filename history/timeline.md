@@ -25,5 +25,3 @@
 
 - **2025 — 高效推理方法**
   - VLA-Cache、SP-VLA、EfficientVLA 等提出时序/空间维度的 token 复用与剪枝，加速部署。  
-
----
