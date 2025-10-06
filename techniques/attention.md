@@ -6,9 +6,9 @@ Attention（注意力机制）是 Transformer 等现代神经网络架构的核�
 
 其基本公式（scaled dot-product attention）为：
 
-$$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right) \, V$$
+$$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$
 
-- $$Q = X W_Q$$, $$K = X W_K$$, $$V = X W_V$$  
+- $$Q = XW_Q$$, $$K = XW_K$$, $$V = XW_V$$  
 - $$d_k$$ 是 Key 向量维度，用于缩放以稳定梯度  
 - softmax 使得权重归一化，强调高匹配的 Key  
 - 最终输出是各 Value 的加权和  
@@ -18,14 +18,12 @@ Attention 的强大之处在于它可以 **捕捉长程依赖**、**并行计算
 
 在 Transformer 中，Attention 被用于多种变体：**Self-Attention** （对自身序列做注意力）和 **Cross-Attention**（一个序列 attends 到另一个序列）。在 Self-Attention 中，又可以分为 **Causal Attention**（因果向前）和 **Bidirectional Attention**（双向）等。  
 
-下面我们分别详细介绍这三类变体。
-
 ---
 
 ## Causal Attention（因果注意力 / 自回归注意力）
 
 ### 概念 + 场景理解  
-Causal Attention（也称作 autoregressive attention、masked attention）用于生成模型 / 解码器中，它在处理序列时 **禁止看到未来 token**。换句话说，token $$i$$ 在 attention 时只能访问 **自己及之前** 的 tokens，不能访问后续内容。这样的设计保证生成的合理性与一致性（不能“偷看未来”）。
+Causal Attention（也称 autoregressive attention 或 masked attention）用于生成模型 / 解码器中，它在处理序列时 **禁止看到未来 token**。换句话说，token $$i$$ 在 attention 时只能访问 **自己及之前** 的 tokens，不能访问后续内容。这保证了生成的合理性与一致性（防止“偷看未来”）。
 
 典型应用：GPT、Decoder 端的自回归文本生成、机器人动作序列预测等。
 
@@ -33,93 +31,99 @@ Causal Attention（也称作 autoregressive attention、masked attention）用�
 
 - 在计算 $$QK^\top$$ 前或后加上 **mask**：将未来位置的注意力得分设为 $$-\infty$$，使其在 softmax 后权重为 0。  
 - 表示上：  
-  $$\alpha_{ij} = \begin{cases} \frac{(Q_i \cdot K_j)}{\sqrt{d_k}} & \text{if } j \le i -\infty & \text{if } j > i \end{cases}$$
+  $$\alpha_{ij} = \frac{Q_i \cdot K_j}{\sqrt{d_k}} \text{ if } j \le i, \text{ else } -\infty$$  
   然后 $$\mathrm{softmax}(\alpha_i)$$ 只对 $$j \le i$$ 有非零权重。  
 - 多头版本中每个头都执行这种 masked 机制。  
 - 在 Transformer 解码器层，常见结构是 **self-attention（causal）→ cross-attention → feedforward**。  
 
 ### 使用案例
-- 文本/语言生成模型（GPT 家族）  
-- 机器人动作生成：动作序列必须一步步执行，不能预先看到后续动作  
+- 文本/语言生成模型（GPT 系列）  
+- 机器人动作生成：动作序列必须一步步执行  
 - 时间序列预测任务  
 
 ### 优点与缺点
 
 | 优点 | 缺点 |
 |---|---|
-| 保证生成顺序一致性、合法性 | 无法利用未来上下文信息 |
-| 适合自回归、多步预测任务 | 在某些理解任务中可能劣于双向 attention |
+| 保证生成顺序一致性 | 无法利用未来上下文信息 |
+| 适合自回归、多步预测任务 | 在理解类任务中效果较差 |
 
 ---
 
 ## Bidirectional Attention（双向 / 非因果注意力）
 
 ### 概念 + 应用场景  
-Bidirectional Attention（也称 non-causal self-attention / 全可见注意力）允许每个 token 同时关注 **前后所有 token**。这种注意力适合理解 / 编码任务，因为模型可以利用全局上下文信息。典型在 BERT、Transformer 的 encoder 层使用。
+Bidirectional Attention（也称 non-causal self-attention 或全可见注意力）允许每个 token 同时关注 **前后所有 token**。这种注意力适合理解 / 编码任务，因为模型可以利用全局上下文信息。典型在 BERT、Transformer encoder 中使用。
 
 ### 技术细节
 
 - 取消 mask 限制，直接让 $$QK^\top$$ 全矩阵参与 softmax。  
 - 每个 token 可以看到整个序列的信息。  
-- 计算复杂度仍是 $$O(n^2)$$（n 为序列长度）。  
-- 可与 token 压缩 / 稀疏注意力 / efficient attention 方法结合优化。  
-- 在一些线性 attention 的变体中，为了加速 bidirectional attention，会引入全局 token 池 (global token pool) 或降维映射 (如 Linformer) 以减少 Key/Value 数量。［见 “Efficient Attention Mechanisms for Large Language Models” 中关于 bidirectional linear attention 的讨论
+- 计算复杂度为 $$O(n^2)$$（n 为序列长度）。  
+- 可结合 token 压缩、稀疏或线性注意力以优化性能。  
+- 某些高效变体（如 Linformer、Performer）使用低秩近似或全局 token 池减少 Key/Value 数量。  
 
 ### 使用案例
-- 语言理解任务（BERT 等模型）  
-- 文本分类、问答、序列标注  
+- 语言理解（BERT、RoBERTa）  
+- 文本分类、问答、命名实体识别  
 - 多模态编码：视觉 + 文本融合阶段  
 
 ### 优点与缺点
 
 | 优点 | 缺点 |
 |---|---|
-| 利用完整上下文，捕捉双向依赖 | 不能用于生成任务（存在信息未来泄漏） |
-| 在理解 / 表征任务中表现更强 | 计算与内存开销较大；在长序列上难以扩展 |
+| 捕捉完整上下文依赖 | 不可用于生成（会信息泄漏） |
+| 理解 / 表征能力强 | 计算和内存消耗高 |
 
 ---
 
 ## Cross-Attention（交叉注意力 / 跨序列注意力）
 
 ### 概念 + 场景理解  
-Cross-Attention 是指 Query、Key、Value 来自 **不同的序列 / 模态**：例如，decoder 在生成时对 encoder 输出做 attention；或 Vision-Language 模型中，语言 token attends 到视觉 token。Cross-Attention 用于融合两个不同输入域的信息。
+Cross-Attention 是指 Query、Key、Value 来自 **不同的序列或模态**：例如，decoder 在生成时对 encoder 输出做 attention；或在视觉-语言模型中，语言 token attends 到视觉 token。用于融合不同信息源。
 
 ### 技术细节
 
-- 通常设定 $$Q = X_{\text{query}} W_Q$$，$$K = Y_{\text{key}} W_K$$，$$V = Y_{\text{value}} W_V$$，其中 $$X$$ 和 $$Y$$ 是不同序列或不同模态的表示。  
-- 计算仍是 $$\mathrm{softmax}(QK^\top / \sqrt{d_k}) V$$。  
-- 不存在 causal mask，除非在特定生成模块中混用 cross-attention + causal mask。  
-- 在 multi-head 架构中，不同头分别捕捉不同 Query-Key 对齐方式。  
+- 设定 $$Q = X_{\text{query}}W_Q$$，$$K = Y_{\text{key}}W_K$$，$$V = Y_{\text{value}}W_V$$，其中 $$X$$ 和 $$Y$$ 来自不同序列 / 模态。  
+- 计算为 $$\mathrm{softmax}(QK^\top / \sqrt{d_k})V$$。  
+- 通常无 causal mask，除非用于自回归解码阶段。  
+- 多头机制帮助学习多种模态对齐方式。  
 
 ### 使用案例
-- Encoder-Decoder 架构：decoder attends 到 encoder 输出  
-- VLA / Vision-Language 模型：语言 attends 到视觉 token，或视觉 attends 到语言 token  
-- 多模态融合任务（图像+文本、视频+字幕等）  
+- Encoder–Decoder：Decoder attends 到 Encoder 输出  
+- Vision-Language 模型：语言 attends 到视觉 token  
+- 多模态任务：图文匹配、视频字幕生成等  
 
 ### 优点与缺点
 
 | 优点 | 缺点 |
 |---|---|
-| 强信息融合能力，让一个模态“理解”另一模态 | 如果模态间没有对齐关系，attention 学习难度高 |
-| 灵活融合异质输入 | 计算成本仍高，跨序列注意力缺乏对齐先验时训练更困难 |
+| 强信息融合能力 | 模态对齐难度大 |
+| 灵活融合异质输入 | 计算成本高 |
 
 ---
 
-## 对比 + 组合趋势
+## 对比与组合趋势
 
-- **Causal vs Bidirectional**：前者适合自回归生成任务；后者适合理解 / 表示任务。  
-- **Self-Attention vs Cross-Attention**：前者是在同一序列内部建立关系；后者是在不同序列 / 模态之间建立关系。  
-- 在许多现代模型中，这三类 attention 经常混用：例如，在 Transformer decoder 层，先执行 causal self-attention，再做 cross-attention（对 encoder 输出），最后 feedforward。  
-- 对于长序列 / 高频控制任务，往往需要高效 attention（稀疏注意力、线性注意力、缓存机制）来降低计算开销。  
-- 在机器人 VLA 模型中，可以用 **causal attention** 来做动作序列生成，用 **cross-attention** 融合视觉 + 语言，用 **bidirectional attention** 在融合阶段或语义理解阶段使用。
+- **Causal vs Bidirectional**：前者适合生成，后者适合理解。  
+- **Self vs Cross Attention**：前者在同一序列内建模，后者跨模态或跨序列融合。  
+- Transformer decoder 中常见组合：Causal Self-Attention → Cross-Attention → Feedforward。  
+- 长序列任务常用高效注意力（稀疏、线性、缓存等）减少开销。  
+- 在机器人 VLA 模型中：  
+  - **Causal Attention** → 动作序列生成  
+  - **Cross-Attention** → 视觉 + 语言融合  
+  - **Bidirectional Attention** → 高层语义理解阶段  
 
 ---
 
 ## 意义与实践注意
 
-- Attention 提供了统一的计算框架，使模型能够灵活聚焦、融合多模态信息，是 Transformer 成功的关键之一。  
-- 对于 VLA / 机器人模型来说，理解各类 attention 的适合场景至关重要：生成动作要用 causal；融合模态要用 cross；语义理解阶段可用 bidirectional。  
-- 在资源受限环境下，应结合高效 attention 变体（如 linear attention、稀疏注意力、token 缩减、缓存机制）来保证性能与可扩展性。  
-- 在混合架构中注意 mask、对齐、维度匹配等细节，否则可能引入信息泄漏或训练不稳定。
+- Attention 提供了统一的计算框架，使模型能灵活聚焦、融合多模态信息。  
+- 对于 VLA / 机器人任务：  
+  - 生成动作用 **causal**  
+  - 融合模态用 **cross**  
+  - 理解阶段用 **bidirectional**  
+- 资源受限时应使用高效变体（linear/sparse/token reduction/caching）。  
+- 注意 mask、对齐、维度匹配等细节，避免信息泄漏与训练不稳定。
 
 ---
