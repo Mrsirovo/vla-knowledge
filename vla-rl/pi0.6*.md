@@ -688,33 +688,7 @@ reward -> return -> value -> advantage -> positive/negative token
 
 ---
 
-## 19. README 风格摘要
-
-如果你想在 GitHub 仓库首页用更简短的话概括，可以直接放下面这段：
-
-### What is `π0.6 -> π0.6*`?
-`π0.6` is a reference / current VLA policy.  
-`π0.6*` is an improved policy extracted by conditioning the policy on whether an action has positive advantage.
-
-### Core idea
-1. Collect trajectories with the current policy.
-2. Train a distributional value function from Monte Carlo returns.
-3. Compute action advantages using the learned value model.
-4. Convert the advantage into a binary improvement label.
-5. Feed the label into the policy as an additional language condition:
-   - `Advantage: positive`
-   - `Advantage: negative`
-6. Train the policy with supervised objectives:
-   - discrete actions: token likelihood
-   - continuous actions: flow matching loss
-7. At inference time, condition on `Advantage: positive` to extract an improved policy.
-
-### Why it works
-It avoids unstable direct policy gradients and turns RL signals into a conditional generation problem that is easier to optimize for large VLA models.
-
----
-
-## 20. 最终结论
+## 19. 最终结论
 
 `π0.6` 这套“强化学习”流程，本质上可以概括为：
 
@@ -723,22 +697,3 @@ It avoids unstable direct policy gradients and turns RL signals into a condition
 因此，从 `π0.6` 到 `π0.6*` 的关键，不是直接套用 policy gradient，而是：
 
 > **把 RL 的改进信号蒸馏成一个可控的条件生成目标。**
-
----
-
-## 21. 可直接引用的精简版结论
-
-```text
-π0.6 does not perform reinforcement learning via standard policy gradients.
-Instead, it uses a critic-driven policy extraction pipeline:
-
-1. collect trajectories with the current/reference policy,
-2. train a distributional value function from Monte Carlo returns,
-3. compute advantages for each action,
-4. threshold the advantage into an improvement indicator,
-5. encode the indicator as a language condition (e.g. "Advantage: positive"),
-6. train the VLA policy to model both the regular action distribution and the improvement-conditioned action distribution.
-
-At inference time, conditioning on positive advantage yields an improved policy π0.6*.
-```
-
