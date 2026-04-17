@@ -1,4 +1,4 @@
-# TGRPO：通过 Trajectory-wise Group Relative Policy Optimization 微调 VLA 的方法整理（中文）
+# TGRPO：通过 Trajectory-wise Group Relative Policy Optimization 微调 VLA
 
 > 论文：**TGRPO: Fine-tuning Vision-Language-Action Model via Trajectory-wise Group Relative Policy Optimization**  
 > 这份文档按“问题 → 思想 → 方法 → 训练公式 → 实现 → 实验结论”的顺序整理。  
