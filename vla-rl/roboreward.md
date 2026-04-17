@@ -1,4 +1,4 @@
-# RoboReward：通用机器人视觉-语言奖励模型论文总结（中文）
+# RoboReward：通用机器人视觉-语言奖励模型
 
 > 论文：**RoboReward: General-Purpose Vision-Language Reward Models for Robotics**  
 > 这份文档面向 GitHub 仓库整理，重点放在：
