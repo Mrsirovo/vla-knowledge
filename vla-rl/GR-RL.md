@@ -84,7 +84,9 @@ GR-RL 的训练可以拆成三段：
 
 论文明确写到：他们使用 **TD3+BC** 来训练 critic，并定义一个稀疏奖励：
 
-$$r(o_t, l, s_t, a_t)=\begin{cases}\gamma^{T-t}\,\mathbb{I}(\tau), & t > T-k \\ 0, & t \le T-k\end{cases}\tag{1}$$
+```math
+r(o_t, l, s_t, a_t)=\begin{cases}\gamma^{T-t}\,\mathbb{I}(\tau), & t > T-k \\ 0, & t \le T-k\end{cases}
+```
 
 ### 公式解释
 
@@ -123,7 +125,9 @@ $$r(o_t, l, s_t, a_t)=\begin{cases}\gamma^{T-t}\,\mathbb{I}(\tau), & t > T-k \\ 
 
 训练完 critic 后，作者对每个 transition 计算：
 
-$$\rho_t := \mathrm{mean}\!\left(Q_\phi(o_t, l, s_t, a_t)\right)\tag{2}$$
+```math
+\rho_t := \mathrm{mean}\!\left(Q_\phi(o_t, l, s_t, a_t)\right)
+```
 
 这里 $\rho_t$ 被称为 progress。
 
@@ -176,7 +180,9 @@ $$\rho_t := \mathrm{mean}\!\left(Q_\phi(o_t, l, s_t, a_t)\right)\tag{2}$$
 
 虽然截图里没有把这个规则写成一个独立公式，但文字定义可以写成：
 
-$$\exists j \in \{t,\dots,t+k\},\quad \rho_t - \rho_j > \delta \;\Longrightarrow\; (o_t,l,s_t,a_t)\ \text{is suboptimal}$$
+```math
+\exists j \in \{t,\dots,t+k\},\quad \rho_t - \rho_j > \delta \;\Longrightarrow\; (o_t,l,s_t,a_t)\ \text{is suboptimal}
+```
 
 ### 这个规则的含义
 
@@ -210,7 +216,9 @@ $$\exists j \in \{t,\dots,t+k\},\quad \rho_t - \rho_j > \delta \;\Longrightarrow
 
 所以他们不采用常规 action-space noise，而是做：
 
-$$\text{structured exploration in latent/noise space}$$
+```math
+\text{structured exploration in latent/noise space}
+```
 
 也就是在 **flow policy 的噪声空间** 中探索。
 
@@ -237,7 +245,9 @@ $$\text{structured exploration in latent/noise space}$$
 
 论文给出的 noise predictor 损失为：
 
-$$\mathcal{L}(\pi_{\theta'})=\mathbb{E}_{(o_t,l,s_t)\sim \mathcal{D}}\left[-\,Q_{\phi'}(o_t,l,s_t,\epsilon_t)+c\,\max\left(\frac{1}{2}\|\epsilon_t\|^2-\beta,\;0\right)\right],\qquad \epsilon_t\sim \pi_{\theta'}(o_t,l,s_t)\tag{3}$$
+```math
+\mathcal{L}(\pi_{\theta'})=\mathbb{E}_{(o_t,l,s_t)\sim \mathcal{D}}\left[-\,Q_{\phi'}(o_t,l,s_t,\epsilon_t)+c\,\max\left(\frac{1}{2}\|\epsilon_t\|^2-\beta,\;0\right)\right],\qquad \epsilon_t\sim \pi_{\theta'}(o_t,l,s_t)
+```
 
 ### 公式逐项解释
 
@@ -258,7 +268,9 @@ $$\mathcal{L}(\pi_{\theta'})=\mathbb{E}_{(o_t,l,s_t)\sim \mathcal{D}}\left[-\,Q_
 
 #### 第二项：噪声范数惩罚
 
-$$c\,\max\left(\frac{1}{2}\|\epsilon_t\|^2-\beta,\;0\right)$$
+```math
+c\,\max\left(\frac{1}{2}\|\epsilon_t\|^2-\beta,\;0\right)
+```
 
 这一项是一个 hinge-style regularization。它的作用是：
 
@@ -284,7 +296,7 @@ Q_{\phi'}(o_t,l,s_t,\epsilon_t)
 它的训练目标是：
 
 ```math
-\mathcal{L}(Q_{\phi'})=\mathrm{cross\_entropy}\Big(Q_{\phi'}(o_t,l,s_t,\epsilon_t),\; Q_\phi\big(o_t,l,s_t,\pi_\theta(o_t,l,s_t\mid \epsilon_t)\big)\Big),\quad \epsilon_t \sim \begin{cases}\mathcal{N}(0,1), & \text{with prob. }0.5 \\ \pi_{\theta'}(o_t,l,s_t), & \text{otherwise}\end{cases}\tag{4}
+\mathcal{L}(Q_{\phi'})=\mathrm{cross\_entropy}\Big(Q_{\phi'}(o_t,l,s_t,\epsilon_t),\; Q_\phi\big(o_t,l,s_t,\pi_\theta(o_t,l,s_t\mid \epsilon_t)\big)\Big),\quad \epsilon_t \sim \begin{cases}\mathcal{N}(0,1), & \text{with prob. }0.5 \\ \pi_{\theta'}(o_t,l,s_t), & \text{otherwise}\end{cases}
 ```
 
 ### 公式解释
