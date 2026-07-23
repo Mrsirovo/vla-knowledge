@@ -288,7 +288,8 @@ batch (s, a, r, s')
 常配合 **clipped double-Q**（两套 `Q` 取 min）进一步抑制过估计。
 ### 4.9 在 LWD 中的位置（上下文）
 LWD 的完整算法 = **DIVL（价值）** + **QAM（策略提取）**。
-本笔记只覆盖价值侧。策略侧需要把 `\nabla_{{a}} Q` 稳定灌入 flow-based VLA；那是 QAM 的工作，此处不展开。
+
+本笔记覆盖价值侧。系统飞轮、QAM 与机群实验见 [`../vla-rl/LWD.md`](../vla-rl/LWD.md)。
 ---
 ## 5. IQL vs DIVL 对照
 | 维度 | IQL | DIVL |

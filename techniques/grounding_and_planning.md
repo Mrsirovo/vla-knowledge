@@ -64,6 +64,7 @@
 - **可解释性 vs 泛化性**：前者强调安全与可控，后者强调开放性和扩展性。  
 - **未来方向**：  
   - **层级 VLA 模型**：结合规划与执行，平衡可控性与泛化性。  
+  - **多尺度记忆**：短视觉历史 + 长语言摘要（见 [`MEM.md`](./MEM.md)）。  
   - **多智能体协作**：语言驱动的协同规划。  
   - **思维链结合动作标记化**：提升复杂长时序任务的执行能力。  
 
@@ -74,3 +75,4 @@
 - Liang et al., *Code-as-Policies: Language Model Programs for Embodied Control*, arXiv 2023.  
 - Brohan et al., *RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robots*, arXiv 2023.  
 - Kim et al., *OpenVLA: Open Vision-Language-Action Model for Robotics*, arXiv 2025.  
+- Torne, Pertsch, et al., *MEM: Multi-Scale Embodied Memory for Vision Language Action Models*, arXiv 2026.  

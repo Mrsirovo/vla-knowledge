@@ -1,8 +1,11 @@
 # π0.6 到 π0.6\*：基于 Advantage Conditioning 的训练
 
 > 这份文档基于论文相关章节的阅读整理，目标是把 **π0.6 是怎么做“强化学习”** 这件事讲清楚。  
+> 对应 Physical Intelligence 的 **Recap** 路线：用 reward/value/advantage 驱动条件行为克隆，得到任务级 specialist `π0.6*`（亦写作 π\*0.6）。  
 > 重点不在复现所有论文细节，而在于把方法链路串起来：**问题 → 思想 → 目标函数 → 实现方式 → pre-train → post-train**。  
-> 术语上，本文把当前行为策略/参考策略统称为 `π_ref`；在具体章节里，`π0.6` 可理解为一个当前版本的 VLA policy，而 `π0.6*` 是 advantage-conditioned 之后的改进策略。
+> 术语上，本文把当前行为策略/参考策略统称为 `π_ref`；在具体章节里，`π0.6` 可理解为一个当前版本的 VLA policy，而 `π0.6*` 是 advantage-conditioned 之后的改进策略。  
+>
+> 后续演进：轻量在线精修见 [`RL-Token.md`](./RL-Token.md)；把 RL 经验蒸馏进通才模型见 [`pi0.7.md`](./pi0.7.md)。
 
 ---
 

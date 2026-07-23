@@ -4,7 +4,8 @@
 
 - 📜 历史纵览：`history/timeline.md`
 - 🧠 主要模型：`models/`
-- 🛠️ 关键技术（含 LoRA 深入细节）：`techniques/`
+- 🛠️ 关键技术（含 LoRA、[MEM](techniques/MEM.md)）：`techniques/`
+- 🎯 VLA + 强化学习：`vla-rl/`
 - 🤝 参与贡献：`CONTRIBUTING.md`
 
 > 主线参考综述：
@@ -16,8 +17,9 @@
 
 ## 快速导航
 
-- 入门模型：RT-1、RT-2、RT-X、Octo、OpenVLA  
-- 关键技术：LoRA/PEFT、语言-行动规划（SayCan/Code-as-Policies）、动作标记化、加速与部署（VLA-Cache、SP-VLA、EfficientVLA）  
+- 入门模型：RT-1、RT-2、RT-X、Octo、OpenVLA、π₀ / π₀.₅  
+- 关键技术：LoRA/PEFT、语言-行动规划（SayCan/Code-as-Policies）、[MEM 长短期记忆](techniques/MEM.md)、动作标记化、加速与部署（VLA-Cache、SP-VLA、EfficientVLA）  
+- VLA-RL：π\*0.6 / Recap、[π0.7](vla-rl/pi0.7.md)、[RL Token](vla-rl/RL-Token.md)、[ALOE](vla-rl/ALOE.md)、[LWD](vla-rl/LWD.md)、GR-RL、TGRPO、GRAPE  
 - 数据资源：Open X-Embodiment、DROID、CALVIN
 
 ---
